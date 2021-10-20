@@ -27,3 +27,28 @@ options(
 scale_colour_discrete = scale_colour_viridis_d
 scale_fill_discrete = scale_fill_viridis_d
 ```
+
+## Problem 1
+
+
+```{r}
+data("instacart")
+instacart = as_tibble(instacart)
+```
+
+In this dataset, there are `r nrow(instacart)` rows and `r ncol(instacart)` columns. Variable represents users, order, product and related information. Each row represent each product from order. order-related variable included number, day and hour, such as order_number and days_since_prior_order. product-related variable included product name, aisle and department, such as fresh fruit, Banana, dairy eggs. 
+
+### 1.a
+
+```{r}
+instacart %>% 
+  count(aisle, sort = TRUE)
+```
+There are 134 aisles and the most item is fresh vegetable.
+
+
+
+
+
+
+
