@@ -89,6 +89,68 @@ instacart %>%
 
 
 
+## Problem 2
+```{r}
+data("brfss_smart2010")
+brfss = brfss_smart2010 %>% 
+  janitor::clean_names() %>% 
+  filter(topic == "Overall Health", response %in% c("Excellent", "Very good", "Good", "Fair", "Poor")) %>% 
+  mutate(
+    response = factor(response),
+    response = fct_relevel(response, "Poor", "Fair", "Good", "Very good", "Excellent"))
+  
+```
+
+
+### 2.a
+```{r}
+brfss %>% 
+  filter(year %in% c("2002", "2010")) %>% 
+  group_by(year) %>% 
+  count(locationabbr) %>%  
+  filter(n>=7) %>% 
+  knitr::kable()
+
+```
+
+
+### 2.b
+```{r}
+brfss %>% 
+  group_by(year, locationabbr) %>% 
+  filter(response == "Excellent") %>% 
+  select(year, locationabbr, data_value) %>% 
+  summarize(mean_data_value = mean(data_value, na.rm = TRUE)) %>% 
+  ggplot(aes(x= year, y = mean_data_value, color = locationabbr))+
+  geom_line(aes(group = locationabbr))
+
+```
+
+### 2.c
+```{r}
+plot_2006 = 
+  brfss %>% 
+  group_by(response) %>% 
+  filter(year == 2006, locationabbr=="NY") %>% 
+  select(locationabbr, response, data_value) %>% 
+  ggplot(aes(x = data_value, fill = response)) +
+  geom_density(alpha = .4) + theme(legend.position = "none") +
+  labs(title = "2006")
+
+
+plot_2010 = 
+  brfss %>% 
+  group_by(response) %>% 
+  filter(year == 2010, locationabbr=="NY") %>% 
+  select(locationabbr, response, data_value) %>% 
+  ggplot(aes(x = data_value, fill = response)) +
+  geom_density(alpha = .4) + theme(legend.position = "right") + labs(title = "2010")
+
+plot_2006/plot_2010
+
+
+```
+
 
 
 
