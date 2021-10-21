@@ -152,5 +152,45 @@ plot_2006/plot_2010
 ```
 
 
+## Problem 3
+
+### 3.a
+```{r}
+accel_df = 
+  read_csv("accel_data.csv") %>% 
+  janitor::clean_names() %>% 
+  pivot_longer(
+    activity_1:activity_1440,
+    names_to = "activity",
+    names_prefix = "activity_", 
+    values_to = "activity_value"
+  ) %>% 
+  mutate(weekday_or_weekend = ifelse(day %in% c("Saturday", "Sunday"), "weekend", "weekday"))
+
+```
+
+
+### 3.b
+```{r}
+accel_df %>% 
+  group_by(day, week) %>% 
+  summarize(total_act = sum(activity_value)) %>% 
+  pivot_wider(
+    names_from = week, 
+    values_from = total_act) %>% 
+  knitr::kable()
+```
+There are two data which is Saturdays are pretty low than other days.
+
+```{r}
+
+accel_df %>% 
+  ggplot(aes(x = activity, y = activity_value, color = day)) + 
+  geom_smooth(se = FALSE)+
+  geom_point(alpha = .5) 
+
+```
+
+This plot represent activity review and each color show each day. This plot shows that the participant might engage in some activities that demand a lot of physical energies. In addition, the activity tends to be lower at night. that From the plot above, we can see that there are two notable peaks for Thursday and Friday. This is reasonable as the participant is relatively stationary when he falls asleep.
 
 

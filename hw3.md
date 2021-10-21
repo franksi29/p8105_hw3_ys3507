@@ -254,3 +254,75 @@ plot_2006/plot_2010
 ```
 
 <img src="hw3_files/figure-gfm/unnamed-chunk-9-1.png" width="90%" />
+
+## Problem 3
+
+### 3.a
+
+``` r
+accel_df = 
+  read_csv("accel_data.csv") %>% 
+  janitor::clean_names() %>% 
+  pivot_longer(
+    activity_1:activity_1440,
+    names_to = "activity",
+    names_prefix = "activity_", 
+    values_to = "activity_value"
+  ) %>% 
+  mutate(weekday_or_weekend = ifelse(day %in% c("Saturday", "Sunday"), "weekend", "weekday"))
+```
+
+    ## Rows: 35 Columns: 1443
+
+    ## ── Column specification ────────────────────────────────────────────────────────
+    ## Delimiter: ","
+    ## chr    (1): day
+    ## dbl (1442): week, day_id, activity.1, activity.2, activity.3, activity.4, ac...
+
+    ## 
+    ## ℹ Use `spec()` to retrieve the full column specification for this data.
+    ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+
+### 3.b
+
+``` r
+accel_df %>% 
+  group_by(day, week) %>% 
+  summarize(total_activity = sum(activity_value)) %>% 
+  pivot_wider(
+    names_from = week, 
+    values_from = total_activity) %>% 
+  knitr::kable()
+```
+
+    ## `summarise()` has grouped output by 'day'. You can override using the `.groups` argument.
+
+| day       |         1 |      2 |      3 |      4 |      5 |
+|:----------|----------:|-------:|-------:|-------:|-------:|
+| Friday    | 480542.62 | 568839 | 467420 | 154049 | 620860 |
+| Monday    |  78828.07 | 295431 | 685910 | 409450 | 389080 |
+| Saturday  | 376254.00 | 607175 | 382928 |   1440 |   1440 |
+| Sunday    | 631105.00 | 422018 | 467052 | 260617 | 138421 |
+| Thursday  | 355923.64 | 474048 | 371230 | 340291 | 549658 |
+| Tuesday   | 307094.24 | 423245 | 381507 | 319568 | 367824 |
+| Wednesday | 340115.01 | 440962 | 468869 | 434460 | 445366 |
+
+There are two data which is Saturdays are pretty low than other days.
+
+``` r
+accel_df %>% 
+  ggplot(aes(x = activity, y = activity_value, color = day)) + 
+  geom_smooth(se = FALSE)+
+  geom_point(alpha = .5) 
+```
+
+    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
+
+<img src="hw3_files/figure-gfm/unnamed-chunk-12-1.png" width="90%" />
+
+This plot represent activity review and each color show each day. This
+plot shows that the participant might engage in some activities that
+demand a lot of physical energies. In addition, the activity tends to be
+lower at night. that From the plot above, we can see that there are two
+notable peaks for Thursday and Friday. This is reasonable as the
+participant is relatively stationary when he falls asleep.
